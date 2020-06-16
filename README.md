@@ -18,4 +18,6 @@ Para poder ejecutar la API es necesario deployar el War en un servidor de aplica
 
 Para poder probar la aplicación, se puede usar cualquier herramienta que permita hacer peticiones POST y GET. Además en la URL [URL_APP]/test-resbeans.html se dispone de una herramienta para dicho fin.
 
-Se pretende dejar disponible la app en la URL: [URL_APP] = http://testml.myftp.org:5000, pero por problemas con el proveedor de internet no se ha podido aún, por lo que es necesario solicitar una URl que será válida por 8 hs, que tendrá el formato: http://[NUM_ALEATORIO].ngrok.io (Ejemplo: http://5cba96d06876.ngrok.io, Válido por 8 hs)
+Se pretende dejar disponible la app en la URL: [URL_APP] = http://testml.myftp.org, pero por problemas con el proveedor de internet no se ha podido aún, por lo que es necesario solicitar una URl que será válida por 8 hs, que tendrá el formato: http://[NUM_ALEATORIO].ngrok.io (Ejemplo: http://5cba96d06876.ngrok.io, Válido por 8 hs).
+
+[URL_APP]: http://984434c56230.ngrok.io (Válida hasta 16:20 16/6)
