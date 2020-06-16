@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DNAFacade.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;Mutante&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">mutante</a> &gt; <span class="el_source">DNAFacade.java</span></div><h1>DNAFacade.java</h1><pre class="source lang-java linenums">package mutante;
+
+//import config.HibernateUtil;
+import mutante.entity.Dna;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+/**
+ *
+ * @author Vir
+ */
+
+public class DNAFacade {
+
+//    @PersistenceContext(unitName = &quot;MutantPU&quot;)
+    private EntityManager em;
+ 
+<span class="nc" id="L21">    public DNAFacade() {</span>
+<span class="nc" id="L22">        EntityManagerFactory factory = Persistence.createEntityManagerFactory(&quot;MutantPU&quot;);</span>
+<span class="nc" id="L23">        this.em = factory.createEntityManager();</span>
+     
+<span class="nc" id="L25">    }</span>
+    
+<span class="nc" id="L27">    public DNAFacade(String persistenteUnit) {</span>
+<span class="nc" id="L28">        EntityManagerFactory factory = Persistence.createEntityManagerFactory(persistenteUnit);</span>
+<span class="nc" id="L29">        this.em = factory.createEntityManager();</span>
+     
+<span class="nc" id="L31">    }</span>
+
+    public void create(Dna dna) {       
+//        HibernateUtil.getSessionFactory().getCurrentSession().persist(dna);
+<span class="nc" id="L35">        em.persist(dna);</span>
+
+<span class="nc" id="L37">    }</span>
+
+ public int countMutant() {
+//        Query cq = em.createQuery(&quot;SELECT COUNT FROM DNA WHERE isMutant is True&quot;);
+
+<span class="nc" id="L42">        int count = ((Number)em.createNamedQuery(&quot;Dna.findMutants&quot;).getSingleResult()).intValue();    </span>
+
+// int count = HibernateUtil.getSessionFactory().getCurrentSession().createQuery(&quot;SELECT COUNT (D) FROM DNA D WHERE D.IS_MUTANT = TRUE&quot;).getFirstResult();
+<span class="nc" id="L45">        return count;</span>
+    }
+    
+  public int countHuman() {
+<span class="nc" id="L49">        int count = ((Number)em.createNamedQuery(&quot;Dna.findHumans&quot;).getSingleResult()).intValue();</span>
+<span class="nc" id="L50">        return count;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

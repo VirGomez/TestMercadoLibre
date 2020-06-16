@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Dna.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;Mutante&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">mutante.entity</a> &gt; <span class="el_source">Dna.java</span></div><h1>Dna.java</h1><pre class="source lang-java linenums">package mutante.entity;
+
+import java.io.Serializable;
+import java.util.Objects;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import mutante.exception.DNAException;
+import mutante.exception.IsMutantException;
+
+/**
+ *
+ * @author Vir
+ */
+@Entity
+@Table(name = &quot;Dna&quot;)
+@NamedQueries({
+    @NamedQuery(name = &quot;Dna.findAll&quot;, query = &quot;SELECT d FROM Dna d&quot;),
+    @NamedQuery(name = &quot;Dna.findById&quot;, query = &quot;SELECT d FROM Dna d WHERE d.id = :id&quot;),
+    @NamedQuery(name = &quot;Dna.findByIsMutant&quot;, query = &quot;SELECT d FROM Dna d WHERE d.isMutant = :isMutant&quot;),
+    @NamedQuery(name = &quot;Dna.findMutants&quot;, query = &quot;SELECT COUNT(d) FROM Dna d WHERE d.isMutant = true&quot;),
+    @NamedQuery(name = &quot;Dna.findHumans&quot;, query = &quot;SELECT COUNT(d) FROM Dna d WHERE d.isMutant = false&quot;),
+    @NamedQuery(name = &quot;Dna.findByN&quot;, query = &quot;SELECT d FROM Dna d WHERE d.n = :n&quot;),
+    @NamedQuery(name = &quot;Dna.findByDna&quot;, query = &quot;SELECT d FROM Dna d WHERE d.dna = :dna&quot;)})
+public class Dna implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @GeneratedValue(generator = &quot;id_seq&quot;)
+    @SequenceGenerator(name = &quot;id_seq&quot;, sequenceName = &quot;id_seq&quot;)
+    @Column(name = &quot;id&quot;, nullable = false, unique = true)
+    private Long id;
+    @Column(name = &quot;is_mutant&quot;)
+    private Boolean isMutant;
+    @Column(name = &quot;n&quot;)
+    private Integer n;
+    @Column(name = &quot;dna&quot;)
+    private String[] dna;
+
+    @Transient
+    private boolean[] horizontal;
+
+    @Transient
+    private boolean[] vertical;
+
+    @Transient
+    private boolean[] diagonalD;
+
+    @Transient
+    private boolean[] diagonalA;
+
+<span class="fc" id="L60">    @Transient</span>
+    private int total = 0;
+
+<span class="fc" id="L63">    public Dna() {</span>
+<span class="fc" id="L64">    }</span>
+
+<span class="fc" id="L66">    public Dna(Integer n, String[] dna) throws DNAException {</span>
+<span class="fc" id="L67">        this.n = n;</span>
+<span class="fc" id="L68">        setDna(dna);</span>
+<span class="fc" id="L69">        this.isMutant = false;</span>
+<span class="fc" id="L70">        this.horizontal = new boolean[n * n];</span>
+<span class="fc" id="L71">        this.vertical = new boolean[n * n];</span>
+<span class="fc" id="L72">        this.diagonalD = new boolean[n * n];</span>
+<span class="fc" id="L73">        this.diagonalA = new boolean[n * n];</span>
+<span class="fc" id="L74">    }</span>
+
+    /**
+     * Solo para Test
+     *
+     * @param id
+     * @deprecated
+     */
+    @Deprecated
+    public void setId(Long id) {
+<span class="fc" id="L84">        this.id = id;</span>
+<span class="fc" id="L85">    }</span>
+
+    public Integer getN() {
+<span class="fc" id="L88">        return n;</span>
+    }
+
+    public String[] getDna() {
+<span class="fc" id="L92">        return (String[]) dna;</span>
+    }
+
+    protected void setDna(String[] dna) throws DNAException {
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        if (dna == null) {</span>
+<span class="fc" id="L97">            throw new DNAException(DNAException.NULL_VALUE);</span>
+        }
+<span class="fc" id="L99">        this.dna = validarCaracteresLongitud(dna);</span>
+<span class="fc" id="L100">    }</span>
+
+    private String[] validarCaracteresLongitud(String[] dna) throws DNAException {
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        for (int i = 0; i &lt; n; i++) {</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">            if (dna[i].length() != n) {</span>
+<span class="fc" id="L105">                throw new DNAException(DNAException.INVALID_FORMAT);</span>
+            }
+<span class="fc" id="L107">            dna[i] = dna[i].toUpperCase();</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">            for (int j = 0; j &lt; n; j++) {</span>
+<span class="fc" id="L109">                char character = dna[i].charAt(j);</span>
+<span class="fc bfc" id="L110" title="All 8 branches covered.">                if (!((character == 'A')</span>
+                        || (character == 'C')
+                        || (character == 'G')
+                        || (character == 'T'))) {
+<span class="fc" id="L114">                    throw new DNAException(DNAException.INVALID_CHARACTER);</span>
+                }
+            }
+        }
+<span class="fc" id="L118">        return dna;</span>
+    }
+//
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
+//
+
+    public void setIsMutant(Boolean isMutant) {
+<span class="fc" id="L127">        this.isMutant = isMutant;</span>
+<span class="fc" id="L128">    }</span>
+//
+//    public void setN(Integer n) {
+//        this.n = n;
+//    }
+
+    public Boolean isMutant() {
+<span class="fc" id="L135">        return isMutant;</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L140">        int hash = 7;</span>
+<span class="fc" id="L141">        hash = 47 * hash + Objects.hashCode(this.id);</span>
+<span class="fc" id="L142">        return hash;</span>
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="fc bfc" id="L147" title="All 2 branches covered.">        if (obj == null) {</span>
+<span class="fc" id="L148">            return false;</span>
+        }
+<span class="fc bfc" id="L150" title="All 2 branches covered.">        if (getClass() != obj.getClass()) {</span>
+<span class="fc" id="L151">            return false;</span>
+        }
+<span class="fc" id="L153">        final Dna other = (Dna) obj;</span>
+<span class="pc bpc" id="L154" title="1 of 4 branches missed.">        if ((this.id!= null) &amp;&amp; (other.id != null)) {</span>
+<span class="fc" id="L155">            return this.id.equals(other.id);</span>
+        }
+<span class="fc" id="L157">        return (this.dna.equals(other.dna));</span>
+    }
+
+//    private final String[] matrix;
+//    private final int n;
+//    private Dna dna;
+//
+//    public MutantValidator(final Dna dna) {
+//        this.dna = dna;
+//        this.matrix = dna.getDna();
+//        this.n = dna.getN();
+//    }
+    /**
+     * Método que evalua si un sujeto es mutante o no
+     *
+     * @return
+     */
+    public Boolean test() {
+<span class="fc bfc" id="L175" title="All 2 branches covered.">        for (int i = 0; i &lt; n; i++) {</span>
+<span class="fc bfc" id="L176" title="All 2 branches covered.">            for (int j = 0; j &lt; n; j++) {</span>
+                try {
+<span class="fc" id="L178">                    validateHorizonal(i, j);</span>
+<span class="fc" id="L179">                    validateVertical(i, j);</span>
+<span class="fc" id="L180">                    validateDiagonalA(i, j);</span>
+<span class="fc" id="L181">                    validateDiagonalD(i, j);</span>
+<span class="fc" id="L182">                } catch (IsMutantException e) {</span>
+<span class="fc" id="L183">                    setIsMutant(true);</span>
+<span class="fc" id="L184">                    System.out.println(&quot;Mutante&quot;);</span>
+<span class="fc" id="L185">                    return true;</span>
+<span class="fc" id="L186">                }</span>
+            }
+        }
+<span class="fc" id="L189">        System.out.println(&quot;No es mutante&quot;);</span>
+<span class="fc" id="L190">        return false;</span>
+    }
+
+    /**
+     * Método que evalúa la igualdad de caracteres en sentido horizonal
+     *
+     * @param i // Fila
+     * @param j // Columna
+     * @throws IsMutantException
+     */
+    protected void validateHorizonal(int i, int j) throws IsMutantException {
+<span class="fc" id="L201">        int pos = i * n + j;</span>
+        //Si ya fue evaluado en ese sentido no lo vuelve a hacer
+<span class="fc bfc" id="L203" title="All 2 branches covered.">        if (!horizontal[pos]) {</span>
+<span class="fc" id="L204">            horizontal[pos] = true;</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">            if (j &lt; n - 3) {</span>
+<span class="fc" id="L206">                int partial = 1;</span>
+<span class="fc bfc" id="L207" title="All 4 branches covered.">                while ((partial &lt; 4) &amp;&amp; (dna[i].charAt(j) == (dna[i].charAt(j + partial)))) {</span>
+                    // Si el siguiente es igual, suma a la cuenta parcial, y contin
+<span class="fc" id="L209">                    horizontal[pos + partial] = true;</span>
+<span class="fc" id="L210">                    partial++;</span>
+                }
+<span class="fc" id="L212">                validateEnd(partial);</span>
+<span class="fc" id="L213">            } else {</span>
+                //Anulo todos los que no llegan a 4
+<span class="fc bfc" id="L215" title="All 2 branches covered.">                for (int k = 1; k &lt; n - j; k++) {</span>
+<span class="fc" id="L216">                    horizontal[pos + k] = true;</span>
+                }
+            }
+        }
+
+<span class="fc" id="L221">    }</span>
+
+    /**
+     * Método que evalúa la igualdad de caracteres en sentido vertical
+     *
+     * @param i // Fila
+     * @param j // Columna
+     * @throws IsMutantException
+     */
+    protected void validateVertical(int i, int j) throws IsMutantException {
+<span class="fc" id="L231">        int pos = i * n + j;</span>
+        //Si ya fue evaluado en ese sentido no lo vuelve a hacer
+<span class="fc bfc" id="L233" title="All 2 branches covered.">        if (!vertical[pos]) {</span>
+<span class="fc" id="L234">            vertical[pos] = true;</span>
+<span class="fc bfc" id="L235" title="All 2 branches covered.">            if (i &lt; n - 3) {</span>
+<span class="fc" id="L236">                int partial = 1;</span>
+                // Si el siguiente es igual, suma a la cuenta parcial, y continua
+<span class="fc bfc" id="L238" title="All 4 branches covered.">                while ((partial &lt; 4) &amp;&amp; (dna[i].charAt(j) == (dna[i + partial].charAt(j)))) {</span>
+                    // Si el siguiente es igual, suma a la cuenta parcial, y continúa
+<span class="fc" id="L240">                    vertical[pos + (partial * n)] = true;</span>
+<span class="fc" id="L241">                    partial++;</span>
+                }
+<span class="fc" id="L243">                validateEnd(partial);</span>
+<span class="fc" id="L244">            } else {</span>
+                //Anulo todos los que no llegan a 4   
+<span class="fc bfc" id="L246" title="All 2 branches covered.">                for (int k = 1; k &lt; n - i; k++) {</span>
+<span class="fc" id="L247">                    vertical[pos + (k * n)] = true;</span>
+                }
+            }
+        }
+<span class="fc" id="L251">    }</span>
+
+    /**
+     * Método que evalúa la igualdad de caracteres en sentido Diagonal
+     * Descendente
+     *
+     * @param i // Fila
+     * @param j // Columna
+     * @throws IsMutantException
+     */
+    protected void validateDiagonalD(int i, int j) throws IsMutantException {
+<span class="fc" id="L262">        int pos = i * n + j;</span>
+        //Si ya fue evaluado en ese sentido no lo vuelve a hacer
+<span class="fc bfc" id="L264" title="All 2 branches covered.">        if (!diagonalD[pos]) {</span>
+<span class="fc" id="L265">            diagonalD[pos] = true;</span>
+<span class="fc bfc" id="L266" title="All 4 branches covered.">            if ((i &lt; n - 3) &amp;&amp; (j &lt; n - 3)) {</span>
+<span class="fc" id="L267">                int partial = 1;</span>
+                // Si el siguiente es igual, suma a la cuenta parcial, y continúa
+<span class="fc bfc" id="L269" title="All 4 branches covered.">                while ((partial &lt; 4) &amp;&amp; (dna[i].charAt(j) == (dna[i + partial].charAt(j + partial)))) {</span>
+<span class="fc" id="L270">                    diagonalD[(i + partial) * n + (j + partial)] = true;</span>
+<span class="fc" id="L271">                    partial++;</span>
+                }
+<span class="fc" id="L273">                validateEnd(partial);</span>
+<span class="fc" id="L274">            } else {</span>
+                //Si no llega al mínimo de 4 caracteres anula todos los que quedan
+<span class="fc bfc" id="L276" title="All 2 branches covered.">                int remaining = (i &lt; j) ? n - j : n - i;</span>
+<span class="fc bfc" id="L277" title="All 2 branches covered.">                for (int k = 1; k &lt; remaining; k++) {</span>
+<span class="fc" id="L278">                    diagonalD[pos + k + (k * n)] = true;</span>
+                }
+            }
+        }
+<span class="fc" id="L282">    }</span>
+
+    /**
+     * Método que evalúa la igualdad de caracteres en sentido Diagonal
+     * ascendente
+     *
+     * @param i // Fila
+     * @param j // Columna
+     * @throws IsMutantException
+     */
+    protected void validateDiagonalA(int i, int j) throws IsMutantException {
+<span class="fc" id="L293">        int pos = i * n + j;</span>
+        //Si ya fue evaluado en ese sentido no lo vuelve a hacer
+<span class="fc bfc" id="L295" title="All 2 branches covered.">        if (!diagonalA[pos]) {</span>
+<span class="fc" id="L296">            diagonalA[pos] = true;</span>
+<span class="fc bfc" id="L297" title="All 4 branches covered.">            if ((i &lt; n - 3) &amp;&amp; (j &gt; 2)) {</span>
+<span class="fc" id="L298">                int partial = 1;</span>
+                // Si el siguiente es igual, suma a la cuenta parcial, y continúa
+<span class="fc bfc" id="L300" title="All 4 branches covered.">                while ((partial &lt; 4) &amp;&amp; (dna[i].charAt(j) == (dna[i + partial].charAt(j - partial)))) {</span>
+<span class="fc" id="L301">                    diagonalA[(i + partial) * n + (j - partial)] = true;</span>
+<span class="fc" id="L302">                    partial++;</span>
+                }
+<span class="fc" id="L304">                validateEnd(partial);</span>
+<span class="fc" id="L305">            } else {</span>
+<span class="fc bfc" id="L306" title="All 2 branches covered.">                int remaining = ((n - i) &lt; (j + 1)) ? n - i : j + 1;</span>
+                //Si no llega al mínimo de 4 caracteres anula todos los que quedan
+<span class="fc bfc" id="L308" title="All 2 branches covered.">                for (int k = 1; k &lt; remaining; k++) {</span>
+<span class="fc" id="L309">                    diagonalA[(pos - k) + (k * n)] = true;</span>
+                }
+            }
+        }
+<span class="fc" id="L313">    }</span>
+
+    /**
+     * Método que evalúa si se alcanzaron los 4 caracteres consecutivos y suma
+     * al total. En caso de que el total sea 2 lanza una excepción para cortar
+     * la ejecución
+     *
+     * @param partial
+     * @throws IsMutantException
+     */
+    private void validateEnd(int partial) throws IsMutantException {
+<span class="fc bfc" id="L324" title="All 2 branches covered.">        if (partial == 4) {</span>
+<span class="fc" id="L325">            total++;</span>
+<span class="fc bfc" id="L326" title="All 2 branches covered.">            if (total == 2) {</span>
+<span class="fc" id="L327">                throw new IsMutantException();</span>
+            }
+        }
+<span class="fc" id="L330">    }</span>
+
+    /**
+     * Retorna el valor de la variable total. Método utilizado solo para
+     * testing.
+     *
+     * @return
+     */
+    @Deprecated
+    public int getTotal() {
+<span class="fc" id="L340">        return total;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

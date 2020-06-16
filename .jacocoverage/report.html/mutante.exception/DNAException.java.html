@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DNAException.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;Mutante&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">mutante.exception</a> &gt; <span class="el_source">DNAException.java</span></div><h1>DNAException.java</h1><pre class="source lang-java linenums">package mutante.exception;
+
+/** Posibles excepciones dentro del objeto DNA
+ *
+ * @author Vir
+ */
+
+public class DNAException extends Exception {
+
+    public final static String INVALID_FORMAT = &quot;El DNA tiene un formato inválido&quot;;
+    public final static String INVALID_CHARACTER = &quot;El DNA tiene un caracter inválido&quot;;
+    public final static String NULL_VALUE = &quot;El valor no puede ser nulo&quot;;
+
+    public DNAException(String cause) {
+<span class="fc" id="L15">        super(cause);</span>
+<span class="fc" id="L16">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>
